@@ -1,0 +1,13 @@
+{
+  "name": "@drdanryan/csv-translator",
+  "dependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160723033700",
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
+  },
+  "globalDependencies": {
+    "csv-parse": "registry:dt/csv-parse#1.1.0+20160602150508",
+    "csv-stringify": "registry:dt/csv-stringify#0.0.0+20160317120654",
+    "highland": "registry:dt/highland#1.14.0+20160425144847",
+    "node-4": "registry:dt/node-4#4.0.0+20160720000508"
+  }
+}

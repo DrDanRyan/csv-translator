@@ -40,9 +40,9 @@ export class CSVTranslator {
     return (extname(filePath) === '.tsv') ? '\t' : ',';
   }
 
-  write(data: any[], dest: string, cb: ErrorCb): void;
-  write(data: any[], dest: string, opts: WriteOptions, cb: ErrorCb): void;
-  write(data: any[], dest: string, arg1: any, arg2?: any): void {
+  write(dest: string, data: any[], cb: ErrorCb): void;
+  write(dest: string, data: any[], opts: WriteOptions, cb: ErrorCb): void;
+  write(dest: string, data: any[], arg1: any, arg2?: any): void {
     let writeOptions: WriteOptions;
     let cb: ErrorCb;
     if (arg2 === undefined) {

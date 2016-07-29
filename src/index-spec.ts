@@ -91,7 +91,7 @@ const dest = './src/test-output.txt';
 @suite class WriteMethod {
   @test writeEvenColumns(done: Done) {
     const data = [{a: 1, b: 2}, {a: 3, b: 4}];
-    csv.write(data, dest, err => {
+    csv.write(dest, data, err => {
       if (err) { return done(err); }
       csv.read(dest, (err2, newData) => {
         if (err2) { return done(err2); }
@@ -103,7 +103,7 @@ const dest = './src/test-output.txt';
 
   @test writeUnionColumns(done: Done) {
     const data = [{a: 1}, {a: 3, b: 4}];
-    csv.write(data, dest, err => {
+    csv.write(dest, data, err => {
       if (err) { return done(err); }
       csv.read(dest, (err2, newData) => {
         if (err2) { return done(err2); }
@@ -115,7 +115,7 @@ const dest = './src/test-output.txt';
 
   @test writeRestrictedColumns(done: Done) {
     const data = [{a: 1, b: 2}, {a: 3}];
-    csv.write(data, dest, {columns: ['a']}, err => {
+    csv.write(dest, data, {columns: ['a']}, err => {
       if (err) { return done(err); }
       csv.read(dest, (err2, newData) => {
         if (err2) { return done(err2); }

@@ -1,8 +1,10 @@
 {
   "name": "@drdanryan/csv-translator",
   "dependencies": {
-    "chai": "registry:npm/chai#3.5.0+20160723033700",
     "lodash": "registry:npm/lodash#4.0.0+20160723033700"
+  },
+  "devDependencies": {
+    "chai": "registry:npm/chai#3.5.0+20160723033700"
   },
   "globalDependencies": {
     "csv-parse": "registry:dt/csv-parse#1.1.0+20160602150508",

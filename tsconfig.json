@@ -7,9 +7,12 @@
         "preserveConstEnums": true,
         "target": "es5",
         "noImplicitAny": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "declaration": true
     },
-    "exclude": [
-        "node_modules"
+    "files": [
+        "src/index.ts",
+        "src/test/index-spec.ts",
+        "typings/index.d.ts"
     ]
 }

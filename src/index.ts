@@ -21,7 +21,7 @@ export class CSVTranslator {
     createReadStream(src).pipe(parse(parseOptions, cb));
   }
 
-  createReadStream(src: string, readOptions: ReadOptions = {}): NodeJS.ReadWriteStream {
+  createReadStream(src: string, readOptions: ReadOptions = {}): NodeJS.ReadableStream {
     const parseOptions = this.getParseOptions(src, readOptions);
     return createReadStream(src).pipe(parse(parseOptions));
   }
@@ -60,7 +60,7 @@ export class CSVTranslator {
     });
   }
 
-  createWriteStream(dest: string, opts: WriteOptions = {}): stringify.Stringifier {
+  createWriteStream(dest: string, opts: WriteOptions = {}): CSVWriteStream {
     const stringifyOptions = this.getStringifyOptions(dest, opts);
     const stringifyTransform = stringify(stringifyOptions);
     stringifyTransform.pipe(createWriteStream(dest));
@@ -126,4 +126,8 @@ export interface ErrorCb {
 
 export interface ResultCb<T> {
   (err: Error, result?: T): void;
+}
+
+export interface CSVWriteStream extends NodeJS.WritableStream {
+  write(chunk: string[]|Object): boolean;
 }

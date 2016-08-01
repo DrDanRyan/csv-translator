@@ -2,5 +2,5 @@
 node_modules
 dist
 typings
-src/test-output.txt
+src/test/test-output.txt
 npm-debug.log

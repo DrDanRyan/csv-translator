@@ -1,11 +1,11 @@
-import {CSVTranslator} from './index';
+import {CSVTranslator} from '../index';
 import {suite, test} from 'mocha-typescript';
 import {expect} from 'chai';
 const csv = new CSVTranslator();
-const csvSrc = './src/test-input.csv';
-const tsvSrc = './src/test-input.tsv';
-const txtSrc = './src/test-input.txt';
-const dest = './src/test-output.txt';
+const csvSrc = './src/test/test-input.csv';
+const tsvSrc = './src/test/test-input.tsv';
+const txtSrc = './src/test/test-input.txt';
+const dest = './src/test/test-output.txt';
 
 @suite class ReadMethod {
   @test readCSV(done: Done) {

@@ -1,13 +1,13 @@
-import {CSVTranslator} from '../index';
+import {CSVTranslator} from './index';
 import {suite, test} from 'mocha-typescript';
 import {expect} from 'chai';
 const csv = new CSVTranslator();
-const csvSrc = './src/test/test-input.csv';
-const tsvSrc = './src/test/test-input.tsv';
-const txtSrc = './src/test/test-input.txt';
-const dest = './src/test/test-output.txt';
+const csvSrc = './src/test-input.csv';
+const tsvSrc = './src/test-input.tsv';
+const txtSrc = './src/test-input.txt';
+const dest = './src/test-output.txt';
 
-@suite class ReadMethod {
+@suite class Read {
   @test readCSV(done: Done) {
     csv.read(csvSrc, (err, data) => {
       if (err) { return done(err); }
@@ -43,7 +43,7 @@ const dest = './src/test/test-output.txt';
 }
 
 
-@suite class CreateReadStreamMethod {
+@suite class CreateReadStream {
   @test readStreamCSV(done: Done) {
     const readable = csv.createReadStream(csvSrc);
     let counter = 0;
@@ -88,7 +88,7 @@ const dest = './src/test/test-output.txt';
 }
 
 
-@suite class WriteMethod {
+@suite class Write {
   @test writeEvenColumns(done: Done) {
     const data = [{a: 1, b: 2}, {a: 3, b: 4}];
     csv.write(dest, data, err => {
@@ -126,7 +126,7 @@ const dest = './src/test/test-output.txt';
   }
 }
 
-@suite class CreateWriteStreamMethod {
+@suite class CreateWriteStream {
   @test writeStreamEvenColumns(done: Done) {
     const data = [{a: 1, b: 2}, {a: 3, b: 4}];
     const writable = csv.createWriteStream(dest).on('finish', () => {

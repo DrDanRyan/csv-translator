@@ -1,18 +1,20 @@
 {
     "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
         "rootDir": "./src",
         "outDir": "./dist",
-        "module": "commonjs",
         "removeComments": false,
         "preserveConstEnums": true,
-        "target": "es5",
         "noImplicitAny": true,
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "declaration": true
     },
     "files": [
         "src/index.ts",
-        "src/test/index-spec.ts",
+        "src/index-spec.ts",
         "typings/index.d.ts"
     ]
 }

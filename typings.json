@@ -9,6 +9,6 @@
   "globalDependencies": {
     "csv-parse": "registry:dt/csv-parse#1.1.0+20160602150508",
     "csv-stringify": "registry:dt/csv-stringify#0.0.0+20160317120654",
-    "node-4": "registry:dt/node-4#4.0.0+20160720000508"
+    "node-4": "registry:dt/node-4#4.0.0+20160801161248"
   }
 }

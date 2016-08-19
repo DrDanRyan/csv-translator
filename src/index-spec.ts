@@ -1,7 +1,6 @@
-import {CSVTranslator} from './index';
+import {CSVTranslator as csv} from './index';
 import {suite, test} from 'mocha-typescript';
 import {expect} from 'chai';
-const csv = new CSVTranslator();
 const csvSrc = './src/test-input.csv';
 const tsvSrc = './src/test-input.tsv';
 const txtSrc = './src/test-input.txt';

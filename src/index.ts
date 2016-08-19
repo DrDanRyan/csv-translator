@@ -3,11 +3,12 @@ import * as stringify from 'csv-stringify';
 import {createReadStream, writeFile, createWriteStream} from 'fs';
 import {extname} from 'path';
 import * as _ from 'lodash';
+const parallel = require('async/parallel');
 
 export class CSVTranslator {
-  read(src: string, cb: ResultCb<any[]>): any;
-  read(src: string, opts: ReadOptions, cb: ResultCb<any[]>): void;
-  read(src: string, arg1: any, arg2?: any) {
+  static read(src: string, cb: ResultCb<any[]>): any;
+  static read(src: string, opts: ReadOptions, cb: ResultCb<any[]>): void;
+  static read(src: string, arg1: any, arg2?: any) {
     let readOptions: ReadOptions;
     let cb: ResultCb<any[]>;
     if (arg2 === undefined) {
@@ -21,12 +22,47 @@ export class CSVTranslator {
     createReadStream(src).pipe(parse(parseOptions, cb));
   }
 
-  createReadStream(src: string, readOptions: ReadOptions = {}): NodeJS.ReadableStream {
+  static createReadStream(src: string, readOptions: ReadOptions = {}): NodeJS.ReadableStream {
     const parseOptions = this.getParseOptions(src, readOptions);
     return createReadStream(src).pipe(parse(parseOptions));
   }
 
-  private getParseOptions(src: string, readOptions: ReadOptions): ParseOptions {
+  static write(dest: string, data: any[], cb: ErrorCb): void;
+  static write(dest: string, data: any[], opts: WriteOptions, cb: ErrorCb): void;
+  static write(dest: string, data: any[], arg1: any, arg2?: any): void {
+    const writeOptions = arg2 ? arg1 : {};
+    const cb = arg2 ? arg2 : arg1;
+    const stringifyOptions = this.getStringifyOptions(dest, writeOptions, data);
+    const nestedArrayData = this.getNestedArrayData(data, stringifyOptions.columns);
+    stringify(nestedArrayData, stringifyOptions, (err, stringData) => {
+      if (err) { return cb(err); }
+      writeFile(dest, stringData, cb);
+    });
+  }
+
+  static writeParallel(pairs: [string, any[]][], mainCb: ErrorCb): void;
+  static writeParallel(pairs: [string, any[]][], opts: WriteOptions, mainCb: ErrorCb): void;
+  static writeParallel(pairs: [string, any[]][], arg1: any, arg2?: any): void {
+    const writeOptions = arg2 ? arg1 : undefined;
+    const mainCb = arg2 ? arg2 : arg1;
+    const tasks = pairs.map(pair => {
+      const [filename, data] = pair;
+      return function(cb: ErrorCb) {
+        if (data.length === 0) { return cb(); }
+        this.write(filename, data, writeOptions, cb);
+      };
+    });
+    parallel(tasks, (err: Error) => mainCb(err));
+  }
+
+  static createWriteStream(dest: string, opts: WriteOptions = {}): CSVWriteStream {
+    const stringifyOptions = this.getStringifyOptions(dest, opts);
+    const stringifyTransform = stringify(stringifyOptions);
+    stringifyTransform.pipe(createWriteStream(dest));
+    return stringifyTransform;
+  }
+
+  private static getParseOptions(src: string, readOptions: ReadOptions): ParseOptions {
     return {
       delimiter: readOptions.delimiter || this.getDefaultDelimiter(src),
       columns: true,
@@ -36,38 +72,11 @@ export class CSVTranslator {
     };
   }
 
-  private getDefaultDelimiter(filePath: string) {
+  private static getDefaultDelimiter(filePath: string) {
     return (extname(filePath) === '.tsv') ? '\t' : ',';
   }
 
-  write(dest: string, data: any[], cb: ErrorCb): void;
-  write(dest: string, data: any[], opts: WriteOptions, cb: ErrorCb): void;
-  write(dest: string, data: any[], arg1: any, arg2?: any): void {
-    let writeOptions: WriteOptions;
-    let cb: ErrorCb;
-    if (arg2 === undefined) {
-      writeOptions = {};
-      cb = arg1;
-    } else {
-      writeOptions = arg1;
-      cb = arg2;
-    }
-    const stringifyOptions = this.getStringifyOptions(dest, writeOptions, data);
-    const nestedArrayData = this.getNestedArrayData(data, stringifyOptions.columns);
-    stringify(nestedArrayData, stringifyOptions, (err, stringData) => {
-      if (err) { return cb(err); }
-      writeFile(dest, stringData, cb);
-    });
-  }
-
-  createWriteStream(dest: string, opts: WriteOptions = {}): CSVWriteStream {
-    const stringifyOptions = this.getStringifyOptions(dest, opts);
-    const stringifyTransform = stringify(stringifyOptions);
-    stringifyTransform.pipe(createWriteStream(dest));
-    return stringifyTransform;
-  }
-
-  private getStringifyOptions(dest: string, writeOptions: WriteOptions, data?: any[]): StringifyOptions {
+  private static getStringifyOptions(dest: string, writeOptions: WriteOptions, data?: any[]): StringifyOptions {
     const delimiter = writeOptions.delimiter || this.getDefaultDelimiter(dest);
     const header = true;
     let columns: string[];
@@ -83,11 +92,11 @@ export class CSVTranslator {
     return {delimiter, header, columns};
   }
 
-  private getDataFields(data: any[]): string[] {
+  private static getDataFields(data: any[]): string[] {
     return _(data).flatMap(_.keys).uniq().value() as string[];
   }
 
-  private getNestedArrayData(data: any[], columns: string[]): any[] {
+  private static getNestedArrayData(data: any[], columns: string[]): any[] {
     return _.map(data, obj => {
       return _.map(columns, col => {
         return obj[col];

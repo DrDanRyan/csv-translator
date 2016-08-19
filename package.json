@@ -18,6 +18,7 @@
   "author": "Dan Ryan",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.0.1",
     "csv-parse": "^1.1.5",
     "csv-stringify": "^1.0.4",
     "lodash": "^4.2.1"

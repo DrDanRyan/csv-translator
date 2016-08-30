@@ -43,7 +43,7 @@ export class CSVTranslator {
   static writeParallel(pairs: [string, any[]][], mainCb: ErrorCb): void;
   static writeParallel(pairs: [string, any[]][], opts: WriteOptions, mainCb: ErrorCb): void;
   static writeParallel(pairs: [string, any[]][], arg1: any, arg2?: any): void {
-    const writeOptions = arg2 ? arg1 : undefined;
+    const writeOptions = arg2 ? arg1 : {};
     const mainCb = arg2 ? arg2 : arg1;
     const tasks = pairs.map(pair => {
       const [filename, data] = pair;

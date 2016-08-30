@@ -1,6 +1,6 @@
 {
   "name": "@drdanryan/csv-translator",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "A utility class for reading and writing csv files",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

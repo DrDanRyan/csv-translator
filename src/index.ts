@@ -47,8 +47,8 @@ export class CSVTranslator {
     const mainCb = arg2 ? arg2 : arg1;
     const tasks = pairs.map(pair => {
       const [filename, data] = pair;
-      return function(cb: ErrorCb) {
-        if (data.length === 0) { return cb(); }
+      return (cb: ErrorCb) => {
+        if (data.length === 0) { return cb(null); }
         this.write(filename, data, writeOptions, cb);
       };
     });

@@ -68,7 +68,8 @@ export class CSVTranslator {
       columns: true,
       auto_parse: true,
       skip_empty_lines: true,
-      trim: true
+      trim: true,
+      relax: true
     };
   }
 
@@ -121,6 +122,7 @@ interface ParseOptions {
   auto_parse: boolean;
   skip_empty_lines: boolean;
   trim: boolean;
+  relax: boolean;
 }
 
 interface StringifyOptions {

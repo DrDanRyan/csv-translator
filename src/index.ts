@@ -1,10 +1,9 @@
 import * as parse from 'csv-parse';
 import * as stringify from 'csv-stringify';
-import {Readable} from 'stream';
 import {createReadStream, writeFile, createWriteStream} from 'fs';
 import {extname} from 'path';
 import * as _ from 'lodash';
-const parallel = require('async/parallel');
+import { parallel } from 'async';
 
 export class CSVTranslator {
   static read(src: string, cb: ResultCb<any[]>): any;

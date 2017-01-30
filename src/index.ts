@@ -66,7 +66,7 @@ export class CSVTranslator {
     return {
       delimiter: readOptions.delimiter || this.getDefaultDelimiter(src),
       columns: true,
-      auto_parse: true,
+      auto_parse: false,
       skip_empty_lines: true,
       trim: true,
       relax: true

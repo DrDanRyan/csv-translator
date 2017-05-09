@@ -11,8 +11,8 @@ const dest = './src/test-output.txt';
     csv.read(csvSrc, (err, data) => {
       if (err) { return done(err); }
       expect(data).to.deep.equal([
-        {a: 1, b: 2},
-        {a: 3, b: 4}
+        {a: '1', b: '2'},
+        {a: '3', b: '4'}
       ]);
       done();
     });
@@ -22,8 +22,8 @@ const dest = './src/test-output.txt';
     csv.read(tsvSrc, (err, data) => {
       if (err) { return done(err); }
       expect(data).to.deep.equal([
-        {a: 1, b: 2},
-        {a: 3, b: 4}
+        {a: '1', b: '2'},
+        {a: '3', b: '4'}
       ]);
     });
     done();
@@ -33,8 +33,8 @@ const dest = './src/test-output.txt';
     csv.read(txtSrc, {delimiter: '\t'}, (err, data) => {
       if (err) { return done(err); }
       expect(data).to.deep.equal([
-        {a: 1, b: 2},
-        {a: 3, b: 4}
+        {a: '1', b: '2'},
+        {a: '3', b: '4'}
       ]);
     });
     done();
@@ -49,9 +49,9 @@ const dest = './src/test-output.txt';
     readable.on('data', (obj: any) => {
       if (counter === 0) {
         counter++;
-        expect(obj).to.deep.equal({a: 1, b: 2});
+        expect(obj).to.deep.equal({a: '1', b: '2'});
       } else {
-        expect(obj).to.deep.equal({a: 3, b: 4});
+        expect(obj).to.deep.equal({a: '3', b: '4'});
       }
     });
     readable.on('finish', done);
@@ -63,9 +63,9 @@ const dest = './src/test-output.txt';
     readable.on('data', (obj: any) => {
       if (counter === 0) {
         counter++;
-        expect(obj).to.deep.equal({a: 1, b: 2});
+        expect(obj).to.deep.equal({a: '1', b: '2'});
       } else {
-        expect(obj).to.deep.equal({a: 3, b: 4});
+        expect(obj).to.deep.equal({a: '3', b: '4'});
       }
     });
     readable.on('finish', done);
@@ -77,9 +77,9 @@ const dest = './src/test-output.txt';
     readable.on('data', (obj: any) => {
       if (counter === 0) {
         counter++;
-        expect(obj).to.deep.equal({a: 1, b: 2});
+        expect(obj).to.deep.equal({a: '1', b: '2'});
       } else {
-        expect(obj).to.deep.equal({a: 3, b: 4});
+        expect(obj).to.deep.equal({a: '3', b: '4'});
       }
     });
     readable.on('finish', done);
@@ -89,7 +89,7 @@ const dest = './src/test-output.txt';
 
 @suite class Write {
   @test writeEvenColumns(done: Done) {
-    const data = [{a: 1, b: 2}, {a: 3, b: 4}];
+    const data = [{a: 'a', b: 'b'}, {a: 'c', b: 'd'}];
     csv.write(dest, data, err => {
       if (err) { return done(err); }
       csv.read(dest, (err2, newData) => {
@@ -101,24 +101,24 @@ const dest = './src/test-output.txt';
   }
 
   @test writeUnionColumns(done: Done) {
-    const data = [{a: 1}, {a: 3, b: 4}];
+    const data = [{a: 'a'}, {a: 'c', b: 'd'}];
     csv.write(dest, data, err => {
       if (err) { return done(err); }
       csv.read(dest, (err2, newData) => {
         if (err2) { return done(err2); }
-        expect(newData).to.deep.equal([{a: 1, b: ''}, {a: 3, b: 4}]);
+        expect(newData).to.deep.equal([{a: 'a', b: ''}, {a: 'c', b: 'd'}]);
         done();
       });
     });
   }
 
   @test writeRestrictedColumns(done: Done) {
-    const data = [{a: 1, b: 2}, {a: 3}];
+    const data = [{a: '1', b: '2'}, {a: '3'}];
     csv.write(dest, data, {columns: ['a']}, err => {
       if (err) { return done(err); }
       csv.read(dest, (err2, newData) => {
         if (err2) { return done(err2); }
-        expect(newData).to.deep.equal([{a: 1}, {a: 3}]);
+        expect(newData).to.deep.equal([{a: '1'}, {a: '3'}]);
         done();
       });
     });
@@ -127,7 +127,7 @@ const dest = './src/test-output.txt';
 
 @suite class CreateWriteStream {
   @test writeStreamEvenColumns(done: Done) {
-    const data = [{a: 1, b: 2}, {a: 3, b: 4}];
+    const data = [{a: 'a', b: 'b'}, {a: 'c', b: 'd'}];
     const writable = csv.createWriteStream(dest).on('finish', () => {
       csv.read(dest, (err, newData) => {
         expect(newData).to.deep.equal(data);
@@ -140,10 +140,10 @@ const dest = './src/test-output.txt';
   }
 
   @test writeStreamDiscoverColumns(done: Done) {
-    const data = [{a: 1, b: 2}, {a: 3, c: 4}];
+    const data = [{a: '1', b: '2'}, {a: '3', c: '4'}];
     const writable = csv.createWriteStream(dest).on('finish', () => {
       csv.read(dest, (err, newData) => {
-        expect(newData).to.deep.equal([{a: 1, b: 2}, {a: 3, b: ''}]);
+        expect(newData).to.deep.equal([{a: '1', b: '2'}, {a: '3', b: ''}]);
         done();
       });
     }).on('error', done);
@@ -153,10 +153,10 @@ const dest = './src/test-output.txt';
   }
 
   @test writeStreamSpecifyColumns(done: Done) {
-    const data = [{a: 1, b: 2}, {a: 3, c: 4}];
+    const data = [{a: '1', b: '2'}, {a: '3', c: '4'}];
     const writable = csv.createWriteStream(dest, {columns: ['a', 'c']}).on('finish', () => {
       csv.read(dest, (err, newData) => {
-        expect(newData).to.deep.equal([{a: 1, c: ''}, {a: 3, c: 4}]);
+        expect(newData).to.deep.equal([{a: '1', c: ''}, {a: '3', c: '4'}]);
         done();
       });
     }).on('error', done);
@@ -165,7 +165,6 @@ const dest = './src/test-output.txt';
     writable.end();
   }
 }
-
 
 
 interface Done {

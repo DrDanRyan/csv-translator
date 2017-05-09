@@ -1,7 +1,8 @@
+import { WriteOptions } from './index';
 import * as parse from 'csv-parse';
 import * as stringify from 'csv-stringify';
-import {createReadStream, writeFile, createWriteStream} from 'fs';
-import {extname} from 'path';
+import { createReadStream, writeFile, createWriteStream } from 'fs';
+import { extname } from 'path';
 import * as _ from 'lodash';
 import { parallel } from 'async';
 
@@ -18,13 +19,20 @@ export class CSVTranslator {
       readOptions = arg1;
       cb = arg2;
     }
-    const parseOptions = this.getParseOptions(src, readOptions);
+    const delimiter = readOptions.delimiter || this.getDefaultDelimiter(src);
+    const parseOptions = this.getParseOptions(delimiter);
     createReadStream(src).pipe(parse(parseOptions, cb));
   }
 
   static createReadStream(src: string, readOptions: ReadOptions = {}): NodeJS.ReadableStream {
-    const parseOptions = this.getParseOptions(src, readOptions);
+    const delimiter = readOptions.delimiter || this.getDefaultDelimiter(src);
+    const parseOptions = this.getParseOptions(delimiter);
     return createReadStream(src).pipe(parse(parseOptions));
+  }
+
+  static parse(content: string, delimiter: string, cb: ResultCb<any[]>) {
+    const parseOptions = this.getParseOptions(delimiter);
+    parse(content, parseOptions, cb);
   }
 
   static write(dest: string, data: any[], cb: ErrorCb): void;
@@ -32,7 +40,8 @@ export class CSVTranslator {
   static write(dest: string, data: any[], arg1: any, arg2?: any): void {
     const writeOptions = arg2 ? arg1 : {};
     const cb = arg2 ? arg2 : arg1;
-    const stringifyOptions = this.getStringifyOptions(dest, writeOptions, data);
+    if (!writeOptions.delimiter) writeOptions.delimiter = this.getDefaultDelimiter(dest);
+    const stringifyOptions = this.getStringifyOptions(writeOptions, data);
     const nestedArrayData = this.getNestedArrayData(data, stringifyOptions.columns);
     stringify(nestedArrayData, stringifyOptions, (err, stringData) => {
       if (err) { return cb(err); }
@@ -56,15 +65,23 @@ export class CSVTranslator {
   }
 
   static createWriteStream(dest: string, opts: WriteOptions = {}): CSVWriteStream {
-    const stringifyOptions = this.getStringifyOptions(dest, opts);
+    if (!opts.delimiter) opts.delimiter = this.getDefaultDelimiter(dest);
+    const stringifyOptions = this.getStringifyOptions(opts);
     const stringifyTransform = stringify(stringifyOptions);
     stringifyTransform.pipe(createWriteStream(dest));
     return stringifyTransform;
   }
 
-  private static getParseOptions(src: string, readOptions: ReadOptions): ParseOptions {
+  static stringify(data: any[], opts: WriteOptions, cb: ResultCb<string>) {
+    if (!opts.delimiter) opts.delimiter = ',';
+    const stringifyOptions = this.getStringifyOptions(opts);
+    const nestedArrayData = this.getNestedArrayData(data, stringifyOptions.columns);
+    stringify(nestedArrayData, stringifyOptions, cb);
+  }
+
+  private static getParseOptions(delimiter: string): ParseOptions {
     return {
-      delimiter: readOptions.delimiter || this.getDefaultDelimiter(src),
+      delimiter,
       columns: true,
       auto_parse: false,
       skip_empty_lines: true,
@@ -77,8 +94,7 @@ export class CSVTranslator {
     return (extname(filePath) === '.tsv') ? '\t' : ',';
   }
 
-  private static getStringifyOptions(dest: string, writeOptions: WriteOptions, data?: any[]): StringifyOptions {
-    const delimiter = writeOptions.delimiter || this.getDefaultDelimiter(dest);
+  private static getStringifyOptions(writeOptions: WriteOptions, data?: any[]): StringifyOptions {
     const header = true;
     let columns: string[];
 
@@ -90,7 +106,7 @@ export class CSVTranslator {
       columns = undefined;
     }
 
-    return {delimiter, header, columns};
+    return { delimiter: writeOptions.delimiter, header, columns };
   }
 
   private static getDataFields(data: any[]): string[] {
@@ -140,5 +156,5 @@ export interface ResultCb<T> {
 }
 
 export interface CSVWriteStream extends NodeJS.WritableStream {
-  write(chunk: string[]|Object): boolean;
+  write(chunk: string[] | Object): boolean;
 }

@@ -8,7 +8,7 @@
     "csv"
   ],
   "scripts": {
-    "test": "mocha dist",
+    "test": "mocha $(find dist -name '*-spec.js')",
     "preversion": "rm -Rf ./dist && tsc"
   },
   "repository": {

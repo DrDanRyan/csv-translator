@@ -74,7 +74,7 @@ export class CSVTranslator {
 
   static stringify(data: any[], opts: WriteOptions, cb: ResultCb<string>) {
     if (!opts.delimiter) opts.delimiter = ',';
-    const stringifyOptions = this.getStringifyOptions(opts);
+    const stringifyOptions = this.getStringifyOptions(opts, data);
     const nestedArrayData = this.getNestedArrayData(data, stringifyOptions.columns);
     stringify(nestedArrayData, stringifyOptions, cb);
   }
